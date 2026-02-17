@@ -63,6 +63,33 @@ def test_allocate_same_order_line_to_batch_multiple_times_does_not_reduce_availa
     assert batch.available_quantity == 18
 
 
+def test_deallocate_order_line_from_batch_increases_available_quantity():
+    batch, order_line = make_batch_and_order_line(20, 2)
+
+    batch.allocate(order_line)
+    batch.deallocate(order_line)
+
+    assert batch.available_quantity == 20
+
+
+def test_deallocate_order_line_from_batch_multiple_times_does_not_increase_available_quantity():
+    batch, order_line = make_batch_and_order_line(20, 2)
+
+    batch.allocate(order_line)
+    batch.deallocate(order_line)
+    batch.deallocate(order_line)
+
+    assert batch.available_quantity == 20
+
+
+def test_deallocate_unallocated_order_line_does_not_change_available_quantity():
+    batch, order_line = make_batch_and_order_line(20, 2)
+
+    batch.deallocate(order_line)
+
+    assert batch.available_quantity == 20
+
+
 def test_can_allocate_if_available_greater_than_required():
     batch, order_line = make_batch_and_order_line(20, 2)
 

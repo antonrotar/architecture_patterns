@@ -35,6 +35,13 @@ class Batch:
         self._allocated_lines.add(order_line)
         self.quantity -= order_line.quantity
 
+    def deallocate(self, order_line: OrderLine):
+        if order_line not in self._allocated_lines:
+            return
+
+        self._allocated_lines.remove(order_line)
+        self.quantity += order_line.quantity
+
     @property
     def available_quantity(self) -> int:
         return self.quantity
