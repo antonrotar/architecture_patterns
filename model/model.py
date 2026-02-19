@@ -1,7 +1,9 @@
 from dataclasses import dataclass
-from typing import List, Set
+from datetime import date
+from typing import List, Optional, Set
 
 # SKU: Stock Keeping Unit
+# ETA: Estimated Time of Arrival
 
 
 @dataclass(frozen=True)
@@ -19,11 +21,21 @@ class Order:
 
 
 class Batch:
-    def __init__(self, reference: str, sku: str, quantity: int):
+    def __init__(
+        self, reference: str, sku: str, quantity: int, eta: Optional[date] = None
+    ):
         self.reference: str = reference
         self.sku: str = sku
         self.quantity: int = quantity
+        self.eta: Optional[date] = eta
         self._allocated_lines: Set[OrderLine] = set()
+
+    def __lt__(self, other) -> bool:
+        if self.eta is None:
+            return True
+        if other.eta is None:
+            return False
+        return self.eta < other.eta
 
     def allocate(self, order_line: OrderLine):
         if order_line in self._allocated_lines:
@@ -51,3 +63,18 @@ class Batch:
             self.sku == order_line.sku
             and self.available_quantity >= order_line.quantity
         )
+
+
+class OutOfStock(Exception):
+    pass
+
+
+def allocate(order_line: OrderLine, batches: List[Batch]) -> str:
+    sorted_batches = sorted(batches)
+
+    for batch in sorted_batches:
+        if batch.can_allocate(order_line):
+            batch.allocate(order_line)
+            return batch.reference
+
+    raise OutOfStock(f"Cannot allocate order line {order_line} to any batch")
