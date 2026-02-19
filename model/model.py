@@ -54,15 +54,8 @@ class Batch:
         self._allocated_lines.remove(order_line)
         self.quantity += order_line.quantity
 
-    @property
-    def available_quantity(self) -> int:
-        return self.quantity
-
     def can_allocate(self, order_line: OrderLine) -> bool:
-        return (
-            self.sku == order_line.sku
-            and self.available_quantity >= order_line.quantity
-        )
+        return self.sku == order_line.sku and self.quantity >= order_line.quantity
 
 
 class OutOfStock(Exception):

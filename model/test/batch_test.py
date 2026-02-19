@@ -17,12 +17,12 @@ def make_batch_and_order_line(
     return batch, order_line
 
 
-def test_allocate_order_line_to_batch_reduces_available_quantity():
+def test_allocate_order_line_to_batch_reduces_quantity():
     batch, order_line = make_batch_and_order_line(20, 2)
 
     batch.allocate(order_line)
 
-    assert batch.available_quantity == 18
+    assert batch.quantity == 18
 
 
 def test_allocate_order_line_to_batch_with_insufficient_quantity_raises_exception():
@@ -41,7 +41,7 @@ def test_allocate_order_line_to_batch_with_mismatched_sku_raises_exception():
         batch.allocate(order_line)
 
 
-def test_allocate_different_order_lines_to_batch_reduces_available_quantity():
+def test_allocate_different_order_lines_to_batch_reduces_quantity():
     batch = Batch(reference="batch-1", sku="TEST-SKU", quantity=20)
     order_line1 = OrderLine(order_reference="order-1", sku="TEST-SKU", quantity=2)
     order_line2 = OrderLine(order_reference="order-2", sku="TEST-SKU", quantity=3)
@@ -51,43 +51,43 @@ def test_allocate_different_order_lines_to_batch_reduces_available_quantity():
     batch.allocate(order_line2)
     batch.allocate(order_line3)
 
-    assert batch.available_quantity == 10
+    assert batch.quantity == 10
 
 
-def test_allocate_same_order_line_to_batch_multiple_times_does_not_reduce_available_quantity():
+def test_allocate_same_order_line_to_batch_multiple_times_does_not_reduce_quantity():
     batch, order_line = make_batch_and_order_line(20, 2)
 
     batch.allocate(order_line)
     batch.allocate(order_line)
 
-    assert batch.available_quantity == 18
+    assert batch.quantity == 18
 
 
-def test_deallocate_order_line_from_batch_increases_available_quantity():
+def test_deallocate_order_line_from_batch_increases_quantity():
     batch, order_line = make_batch_and_order_line(20, 2)
 
     batch.allocate(order_line)
     batch.deallocate(order_line)
 
-    assert batch.available_quantity == 20
+    assert batch.quantity == 20
 
 
-def test_deallocate_order_line_from_batch_multiple_times_does_not_increase_available_quantity():
+def test_deallocate_order_line_from_batch_multiple_times_does_not_increase_quantity():
     batch, order_line = make_batch_and_order_line(20, 2)
 
     batch.allocate(order_line)
     batch.deallocate(order_line)
     batch.deallocate(order_line)
 
-    assert batch.available_quantity == 20
+    assert batch.quantity == 20
 
 
-def test_deallocate_unallocated_order_line_does_not_change_available_quantity():
+def test_deallocate_unallocated_order_line_does_not_change_quantity():
     batch, order_line = make_batch_and_order_line(20, 2)
 
     batch.deallocate(order_line)
 
-    assert batch.available_quantity == 20
+    assert batch.quantity == 20
 
 
 def test_can_allocate_if_available_greater_than_required():

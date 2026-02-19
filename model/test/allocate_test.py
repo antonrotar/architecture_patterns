@@ -17,8 +17,8 @@ def test_prefers_current_stock_batches_to_shipments():
 
     allocate(line, [in_stock_batch, shipment_batch])
 
-    assert in_stock_batch.available_quantity == 90
-    assert shipment_batch.available_quantity == 100
+    assert in_stock_batch.quantity == 90
+    assert shipment_batch.quantity == 100
 
 
 def test_prefers_earlier_batches():
@@ -29,9 +29,9 @@ def test_prefers_earlier_batches():
 
     allocate(line, [medium, earliest, latest])
 
-    assert earliest.available_quantity == 90
-    assert medium.available_quantity == 100
-    assert latest.available_quantity == 100
+    assert earliest.quantity == 90
+    assert medium.quantity == 100
+    assert latest.quantity == 100
 
 
 def test_returns_allocated_batch_ref():
